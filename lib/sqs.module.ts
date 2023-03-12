@@ -1,12 +1,12 @@
-import { DynamicModule, Global, Module, Provider } from '@nestjs/common';
 import { DiscoveryModule, DiscoveryService } from '@nestjs-plus/discovery';
+import { DynamicModule, Global, Module, Provider } from '@nestjs/common';
 
-import { SqsConfig } from './sqs.config';
-import { SqsService } from './sqs.service';
-import { SqsAsyncConfig } from './sqs.interfaces';
-import { SqsQueueOptions } from './sqs.types';
 import { SqsMetadataScanner } from './sqs-metadata.scanner';
+import { SqsConfig } from './sqs.config';
+import { SqsAsyncConfig } from './sqs.interfaces';
+import { SqsService } from './sqs.service';
 import { SqsStorage } from './sqs.storage';
+import { SqsQueueOptions } from './sqs.types';
 
 @Global()
 @Module({})

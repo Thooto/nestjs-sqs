@@ -1,5 +1,5 @@
+import { SQS } from '@aws-sdk/client-sqs';
 import { Test, TestingModule } from '@nestjs/testing';
-import { SQS } from 'aws-sdk';
 import { Consumer } from 'sqs-consumer';
 import { Producer } from 'sqs-producer';
 

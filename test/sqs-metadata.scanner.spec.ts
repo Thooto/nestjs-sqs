@@ -1,6 +1,6 @@
-import * as faker from 'faker';
 import { DiscoveryModule, DiscoveryService } from '@nestjs-plus/discovery';
 import { Test, TestingModule } from '@nestjs/testing';
+import * as faker from 'faker';
 
 import { SqsMetadataScanner } from '../lib';
 import { SQS_CONSUMER_EVENT_HANDLER, SQS_CONSUMER_METHOD } from '../lib/sqs.constants';

@@ -1,14 +1,14 @@
+import type { QueueAttributeName } from '@aws-sdk/client-sqs';
+import { SQS } from '@aws-sdk/client-sqs';
+import { Injectable, OnApplicationBootstrap, OnModuleDestroy } from '@nestjs/common';
 import { Consumer } from 'sqs-consumer';
 import { Producer } from 'sqs-producer';
-import type { QueueAttributeName } from 'aws-sdk/clients/sqs';
-import * as SQS from 'aws-sdk/clients/sqs';
-import { Injectable, OnApplicationBootstrap, OnModuleDestroy } from '@nestjs/common';
 
-import { SqsConfig } from './sqs.config';
-import { QueueName, SqsMetadata, SqsQueueOption, SqsQueueType } from './sqs.types';
-import { SqsStorage } from './sqs.storage';
-import { Message } from './sqs.interfaces';
 import { SqsMetadataScanner } from './sqs-metadata.scanner';
+import { SqsConfig } from './sqs.config';
+import { Message } from './sqs.interfaces';
+import { SqsStorage } from './sqs.storage';
+import { QueueName, SqsMetadata, SqsQueueOption, SqsQueueType } from './sqs.types';
 
 @Injectable()
 export class SqsService implements OnApplicationBootstrap, OnModuleDestroy {
@@ -42,7 +42,7 @@ export class SqsService implements OnApplicationBootstrap, OnModuleDestroy {
     }
   }
 
-  private createConsumer(option: SqsQueueOption, sqs: AWS.SQS) {
+  private createConsumer(option: SqsQueueOption, sqs: SQS) {
     const { endpoint, accountNumber, region } = this.sqsConfig.option;
     const { name, consumerOptions } = option;
     const metadata: SqsMetadata = this.scanner.sqsMetadatas.get(name);
@@ -53,6 +53,10 @@ export class SqsService implements OnApplicationBootstrap, OnModuleDestroy {
       messageHandler: { batch, handleMessage },
       eventHandler: eventHandlers,
     } = metadata;
+
+    if (typeof region !== 'string') {
+      throw new Error(`Provider for region currently not supported`);
+    }
 
     const consumer = Consumer.create({
       queueUrl: `${endpoint}/${accountNumber}/${name}`,
@@ -74,11 +78,15 @@ export class SqsService implements OnApplicationBootstrap, OnModuleDestroy {
     this.consumers.set(name, consumer);
   }
 
-  private createProducer(option: SqsQueueOption, sqs: AWS.SQS) {
+  private createProducer(option: SqsQueueOption, sqs: SQS) {
     const { endpoint, accountNumber, region } = this.sqsConfig.option;
     const { name, producerOptions } = option;
     if (this.producers.has(name)) {
       throw new Error(`Producer already exists: ${name}`);
+    }
+
+    if (typeof region !== 'string') {
+      throw new Error(`Provider for region currently not supported`);
     }
 
     const producer = Producer.create({
@@ -101,7 +109,7 @@ export class SqsService implements OnApplicationBootstrap, OnModuleDestroy {
       throw new Error(`Consumer/Producer does not exist: ${name}`);
     }
 
-    const { sqs, queueUrl } = (this.consumers.get(name) ?? this.producers.get(name)) as {
+    const { sqs, queueUrl } = (this.consumers.get(name) ?? this.producers.get(name)) as any as {
       sqs: SQS;
       queueUrl: string;
     };
@@ -121,21 +129,17 @@ export class SqsService implements OnApplicationBootstrap, OnModuleDestroy {
    */
   public async purgeQueue(name: QueueName) {
     const { sqs, queueUrl } = this.getQueueInfo(name);
-    return sqs
-      .purgeQueue({
-        QueueUrl: queueUrl,
-      })
-      .promise();
+    return sqs.purgeQueue({
+      QueueUrl: queueUrl,
+    });
   }
 
   public async getQueueAttributes(name: QueueName) {
     const { sqs, queueUrl } = this.getQueueInfo(name);
-    const response = await sqs
-      .getQueueAttributes({
-        QueueUrl: queueUrl,
-        AttributeNames: ['All'],
-      })
-      .promise();
+    const response = await sqs.getQueueAttributes({
+      QueueUrl: queueUrl,
+      AttributeNames: ['All'],
+    });
     return response.Attributes as { [key in QueueAttributeName]: string };
   }
 
