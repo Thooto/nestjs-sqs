@@ -25,6 +25,11 @@ export type SqsProducerOptions = Omit<ProducerOptions, 'queueUrl' | 'region' | '
 
 export type SqsConfigOption = SQSClientConfig & {
   accountNumber: string;
+
+  /**
+   * @default true
+   */
+  enabled?: boolean;
 };
 
 export enum SqsQueueType {

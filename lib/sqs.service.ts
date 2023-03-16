@@ -19,6 +19,9 @@ export class SqsService implements OnApplicationBootstrap, OnModuleDestroy {
 
   public async onApplicationBootstrap(): Promise<void> {
     const sqsConfig = this.sqsConfig.option;
+
+    if (sqsConfig.enabled === false) return;
+
     const sqsQueueOptions = SqsStorage.getQueueOptions();
     const sqs: SQS = new SQS(sqsConfig);
 
@@ -152,6 +155,8 @@ export class SqsService implements OnApplicationBootstrap, OnModuleDestroy {
   }
 
   public send<T = any>(name: QueueName, payload: Message<T> | Message<T>[]) {
+    if (this.sqsConfig.option.enabled === false) return;
+
     if (!this.producers.has(name)) {
       throw new Error(`Producer does not exist: ${name}`);
     }
