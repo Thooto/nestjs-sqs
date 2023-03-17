@@ -1,4 +1,5 @@
 import type { SQSClientConfig } from '@aws-sdk/client-sqs';
+import { FactoryProvider, ModuleMetadata } from '@nestjs/common';
 import type { ConsumerOptions } from 'sqs-consumer';
 import type { Producer } from 'sqs-producer';
 
@@ -56,3 +57,10 @@ export type SqsMetadata = {
     handleEvent: (...args: any[]) => any;
   }>;
 };
+
+export interface SqsQueueAsyncOption extends Pick<ModuleMetadata, 'imports'> {
+  useFactory?: (...args: any[]) => Promise<SqsQueueOption> | SqsQueueOption;
+  inject?: FactoryProvider['inject'];
+}
+
+export type SqsQueueAsyncOptions = Array<SqsQueueAsyncOption>;

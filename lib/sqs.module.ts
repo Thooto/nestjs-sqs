@@ -6,7 +6,7 @@ import { SqsConfig } from './sqs.config';
 import { SqsAsyncConfig } from './sqs.interfaces';
 import { SqsService } from './sqs.service';
 import { SqsStorage } from './sqs.storage';
-import { SqsQueueOptions } from './sqs.types';
+import { SqsQueueAsyncOptions, SqsQueueOptions } from './sqs.types';
 
 @Global()
 @Module({})
@@ -52,6 +52,27 @@ export class SqsModule {
       module: SqsModule,
       providers: [sqsService],
       exports: [sqsService],
+    };
+  }
+
+  public static registerQueueAsync(...options: SqsQueueAsyncOptions) {
+    const queueProviders = options.map((queueOptions) => ({
+      provide: SqsService,
+      useFactory: async (scanner: SqsMetadataScanner, sqsConfig: SqsConfig, ...factoryArgs: unknown[]) => {
+        const createdOptions = await queueOptions.useFactory(...factoryArgs);
+
+        SqsStorage.addQueueOptions([createdOptions]);
+
+        return new SqsService(scanner, sqsConfig);
+      },
+      inject: [SqsMetadataScanner, SqsConfig, ...(queueOptions.inject || [])],
+    }));
+
+    return {
+      global: true,
+      module: SqsModule,
+      providers: [...queueProviders],
+      exports: [...queueProviders],
     };
   }
 
