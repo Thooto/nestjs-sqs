@@ -1,4 +1,4 @@
-import { DiscoveryModule, DiscoveryService } from '@nestjs-plus/discovery';
+import { DiscoveryModule, DiscoveryService } from '@golevelup/nestjs-discovery';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as faker from 'faker';
 

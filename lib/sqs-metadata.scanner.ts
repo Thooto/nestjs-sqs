@@ -1,4 +1,4 @@
-import { DiscoveryService } from '@nestjs-plus/discovery/lib/discovery.service';
+import { DiscoveryService } from '@golevelup/nestjs-discovery';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 
 import { SQS_CONSUMER_EVENT_HANDLER, SQS_CONSUMER_METHOD, SQS_PROCESS } from './sqs.constants';

@@ -58,7 +58,9 @@ describe('SqsService', () => {
 
   describe('getProducerQueueSize', () => {
     it('successfully call producer.queueSize', () => {
-      const mockProducerQueueSizeSpyOn = jest.spyOn(mockProducer, 'queueSize').mockImplementation(() => null);
+      const mockProducerQueueSizeSpyOn = jest
+        .spyOn(mockProducer, 'queueSize')
+        .mockImplementation(() => Promise.resolve(0));
       sqsService.getProducerQueueSize(mockQueueName);
       expect(mockProducerQueueSizeSpyOn).toBeCalled();
     });

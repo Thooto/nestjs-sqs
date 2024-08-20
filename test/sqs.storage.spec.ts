@@ -19,7 +19,7 @@ describe('SqsStorage', () => {
       };
 
       SqsStorage.addQueueOptions([queueOption]);
-      expect(SqsStorage.getQueueOptions().find((v) => v.name === queueOption.name).type).toEqual(SqsQueueType.All);
+      expect(SqsStorage.getQueueOptions().find((v) => v.name === queueOption.name)?.type).toEqual(SqsQueueType.All);
     });
   });
 });

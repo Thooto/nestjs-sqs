@@ -1,4 +1,4 @@
-import { DiscoveryModule, DiscoveryService } from '@nestjs-plus/discovery';
+import { DiscoveryModule, DiscoveryService } from '@golevelup/nestjs-discovery';
 import { DynamicModule, Global, Module, Provider } from '@nestjs/common';
 
 import { SqsMetadataScanner } from './sqs-metadata.scanner';
